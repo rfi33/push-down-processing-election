@@ -27,6 +27,6 @@ public class Main {
 
         System.out.println();
         ElectionResult electionResult = dataRetriever.findWinner();
-        System.out.println(electionResult);
+        System.out.println("Le resultat des votes"+electionResult);
     }
 }
