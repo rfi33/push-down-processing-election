@@ -104,4 +104,27 @@ public class DataRetriever {
         return new VoteSummary(0, 0, 0);
     }
 
+    public double computeTurnoutRate(){
+        String sql = """
+                SELECT COUNT(DISTINCT vote.voter_id) as votants,
+                       COUNT(DISTINCT voter.id) as total_electeurs,
+                       ROUND(COUNT(DISTINCT vote.voter_id)::NUMERIC/COUNT(DISTINCT voter.id)*100,2) as taux_de_participation
+                FROM voter
+                LEFT JOIN  vote on vote.voter_id = voter.id;
+                """;
+        Connection connection = dbConnection.getDBConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()){
+                return resultSet.getDouble("taux_de_participation");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0.0;
+    }
+
 }
