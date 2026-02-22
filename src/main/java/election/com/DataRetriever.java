@@ -77,4 +77,31 @@ public class DataRetriever {
         }
         return result;
     }
+
+    public VoteSummary computeVoteSummary(){
+        String sql = """
+                SELECT count (vote.id) FILTER (WHERE vote.vote_type = 'VALID') as valid_count,
+                        count (vote.id) FILTER (WHERE vote.vote_type = 'BLANK') as blank_count,
+                        count (vote.id) FILTER (WHERE vote.vote_type = 'NULL') as null_count
+                from vote;
+                """;
+        Connection connection = dbConnection.getDBConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                return new VoteSummary(
+                        resultSet.getLong("valid_count"),
+                        resultSet.getLong("blank_count"),
+                        resultSet.getLong("null_count")
+                );
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return new VoteSummary(0, 0, 0);
+    }
+
 }

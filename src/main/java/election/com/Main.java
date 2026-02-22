@@ -16,5 +16,9 @@ public class Main {
         System.out.println();
         List<CandidateVoteCount> byCandidate = dataRetriever.countValidVotesByCandidate();
         System.out.println(byCandidate);
+
+        System.out.println();
+        VoteSummary summary = dataRetriever.computeVoteSummary();
+        System.out.println(summary);
     }
 }
