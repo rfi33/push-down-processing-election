@@ -127,4 +127,29 @@ public class DataRetriever {
         return 0.0;
     }
 
+    public ElectionResult findWinner(){
+        String sql = """
+                SELECT candidate.name as candidate_name,COUNT (vote.id) FILTER (WHERE vote_type = 'VALID') as valid_vote_count
+                from vote inner join candidate on vote.candidate_id = candidate.id
+                GROUP BY candidate.name
+                LIMIT 1;
+                """;
+        Connection connection = dbConnection.getDBConnection();
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                return new ElectionResult(
+                        resultSet.getString("candidate_name"),
+                        resultSet.getLong("valid_vote_count")
+                );
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
 }

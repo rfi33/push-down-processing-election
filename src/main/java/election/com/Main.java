@@ -24,5 +24,9 @@ public class Main {
         System.out.println();
         double turnout = dataRetriever.computeTurnoutRate();
         System.out.println("Taux de participation : " + turnout + "%");
+
+        System.out.println();
+        ElectionResult electionResult = dataRetriever.findWinner();
+        System.out.println(electionResult);
     }
 }
