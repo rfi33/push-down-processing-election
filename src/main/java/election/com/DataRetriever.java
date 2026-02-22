@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataRetriever {
 
@@ -28,5 +30,28 @@ public class DataRetriever {
             throw new RuntimeException(e);
         }
     return 0;
+    }
+
+    public List<VoteTypeCount> countVotesByType(){
+        String sql = """
+                SELECT vote_type::TEXT,count (vote.id) as nb_de_vote from vote group by vote_type;
+                """;
+        List<VoteTypeCount> result = new ArrayList<>();
+        Connection connection = dbConnection.getDBConnection();
+
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                result.add(new VoteTypeCount(
+                        resultSet.getString("vote_type"),
+                        resultSet.getLong("nb_de_vote")
+                ));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 }
